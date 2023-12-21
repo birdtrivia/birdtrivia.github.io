@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Security-Policy" content="default-src 
+https: 'unsafe-inline'">
+
+
+
+    <title>Guess The Bird</title>
+    <!-- The style.css file allows you to change the look of your web 
+pages.
+         If you include the next line in all your web pages, they will all 
+share the same look.
+         This makes it easier to make new pages for your site. -->
+          
+  <style>
+    body, head
+    {
+        width:50%;
+        margin-left:auto;
+        margin-right:auto;
+        text-align: center;
+        font-family: sans-serif;
+        background-color: lightgray;
+    }
+    img {
+        border: 10px solid #555;
+        width: 50%;
+        height: auto;
+    }
+  </style>
+    
+  </head>
+  <body>
+    <h1>Guess The Bird!</h1>
+
+    <p>Guess the bird shown in the image! Sometimes, an image may not appear. If this happens, reload. 
+            If you're consistently getting a 404 error, <strong>look for a <a href="https://store-images.s-microsoft.com/image/apps.11544.b83a4939-131b-491a-9ed2-f5a56977a79a.657ca31d-5806-41af-ace2-8e22571d55f9.d5c2c720-e5ba-4be1-95f7-c9bdc247502b" target="_blank">beetle icon</a> in your 
+            Chrome toolbar (next to your profile picture) and click it so it turns orange.</strong> When entering
+            the bird name, make sure to use correct punctuation (i.e. "Buller's Shearwater," not "Bullers 
+            Shearwater"). Some birds have more than one name, so if you enter a less common name for that
+            species, your answer may be marked as wrong.</p>
+
+
+    <img src="https://www.udacity.com/blog/wp-content/uploads/2021/02/img8.png" id="pic">
+    
+    <form name="myForm" onsubmit="return validateform();">
+    Name: <input type="text" name="fname">
+    <button type='button' onclick="return validateform()">submit</button> 
+    </form>
+<script>let birdnameFull = "";</script>
+    <script type="module">
+    
+
+import { faker } from 'https://cdn.skypack.dev/@faker-js/faker';
+birdnameFull = faker.animal.bird();
+var birdname = birdnameFull;
+console.log(birdname);
+birdname = birdname.replace(" ", "_");
+birdname = birdname.replace("'", "%27");
+var url = 
+'https://en.wikipedia.org/w/api.php?action=query&pithumbsize=300&prop=pageimages&titles='+birdname.toLowerCase()+'&format=json';
+var getJSON = function(url, callback) {
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', url, true);
+    xhr.responseType = 'json';
+    xhr.onload = function() {
+      var status = xhr.status;
+      if (status === 200) {
+        callback(null, xhr.response);
+      } else {
+        callback(status, xhr.response);
+      }
+    };
+    xhr.send();
+};
+getJSON(url, function(err, data) {
+  if (err !== null) {
+    alert('Something went wrong: ' + err);
+  } else {
+    //alert('Your query count: ' + data.query);
+    //const obj = JSON.parse(data);
+    getJSON(url, function(err, data) {
+  if (err !== null) {
+    alert('Something went wrong: ' + err);
+  } else {
+    var birdimage = Object.values(data.query.pages)[0].thumbnail.source;
+    console.log(Object.values(data.query.pages)[0].thumbnail.source);
+    document.getElementById("pic").src=birdimage;
+  }
+});
+  }
+});
+</script>
+<script>
+
+function validateform(){  
+event.preventDefault();
+let name = document.forms["myForm"]["fname"].value;  
+  
+if (name.toLowerCase() !== birdnameFull.toLowerCase()){  
+  y = confirm("Wrong! The correct answer was " + birdnameFull + ". Press OK or hit Enter to play again!");  
+  if(y ==true) { window.location.reload(); }
+}else {  
+  var r = confirm("Correct! Press OK or hit Enter to play again.");  
+  if(r==true) { window.location.reload(); }
+  }  
+}  
+
+    
+
+    </script>
+  </body>
+</html>
